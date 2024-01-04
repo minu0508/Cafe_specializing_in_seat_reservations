@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link th:href="@{/css/globals.css}" href="../static/css/globals.css" rel="stylesheet">
+    <link th:href="@{/css/keep-user.css}" href="../static/css/keep-user.css" rel="stylesheet">
+</head>
+<body>
+<div th:insert="fragments/navigation/topBar :: topBar"></div>
+<div class="container">
+    <div class="box">
+        <div class="content-box">
+            <div class="pageLable">
+                <span>
+                    이탈 예상 회원 목록
+                </span>
+            </div>
+            <hr class="detail_hr">
+            <p class="content-text">회원의 누적 이용금액 30만원 이상, 최근 방문 일자가 30일~90일 사이의 회원 정보를 볼 수 있습니다.</p>
+            <div class="row-box">
+                <div class="left-box">
+                    <div class="space">
+                        <h3>아이디</h3>
+                        <h3>직전등급</h3>
+                        <h3>누적이용금액</h3>
+                        <h3>최근방문일자</h3>
+                        <h3>쿠폰지급</h3>
+                    </div>
+                    <hr/>
+                    <div th:each="userInfo, userIndex : ${userInfos}" class="space-bottom">
+                        <input th:value="${userInfo.userId}" th:id="'userIdSelect_'+${userIndex.index}" class="id" autocomplete='off'/>
+                        <p th:text="${userInfo.bestLevel}">0000</p>
+                        <p th:text="${userInfo.acc}">0000</p>
+                        <p th:text="${userInfo.lastReservation}">0000</p>
+                        <div class="select-box">
+                            <select th:name="couponId" th:id="'couponIdSelect_' + ${userIndex.index}">
+                                <div th:each="coupon: ${coupons}">
+                                    <option th:value="${coupon.id}" th:text="${coupon.name}"></option>
+                                </div>
+                            </select>
+                            <form id="actionForm" method="post" th:action="@{/user/keep}">
+                                <input type="hidden" name="couponId" id="couponId" value="" />
+                                <input type="hidden" name="userId" id="userId" value="" />
+                                <button type="submit" th:onclick="'func(' + ${userIndex.index} + ')'">쿠폰 지급하기</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('couponIdSelect').addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            document.getElementById('selectedCouponId').value = selectedOption.value;
+
+            console.log('CouponId:', document.getElementById('selectedCouponId').value);
+        });
+
+    });
+
+    function func(userIndex) {
+        console.log(userIndex);
+        const selectUserId = document.getElementById('userIdSelect_' + userIndex).value;
+        const selectedCouponId = document.getElementById('couponIdSelect_' + userIndex).value;
+
+        document.getElementById('userId').value = selectUserId;
+        document.getElementById('couponId').value = selectedCouponId;
+
+        const updateForm = document.getElementById('actionForm');
+        updateForm.action = "/user/keep";
+        updateForm.submit();
+    }
+
+    // 옵션 값이 변경될 때마다 호출되어 콘솔에 값 출력
+    function addUserIdAndCouponIdToForm() {
+        console.log('CouponId:', document.getElementById('selectedCouponId').value);
+    }
+</script>
+
+
+</body>
+</html>

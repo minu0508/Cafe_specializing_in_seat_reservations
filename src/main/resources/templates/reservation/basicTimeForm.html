@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>예약 시간 선택 페이지</title>
+  <link th:href="@{/css/globals.css}" href="../static/css/globals.css" rel="stylesheet">
+  <link th:href="@{/css/reservation.css}" href="../static/css/reservation.css" rel="stylesheet">
+</head>
+<body>
+<div th:insert="fragments/navigation/topBar :: topBar"></div>
+<div class="container">
+  <div class="box">
+    <div class="content-box">
+      <div class="date-box">
+        <h2 th:text="${date}+ ' ' + ${day}">0000-00-00 0요일</h2>
+        <a th:href="@{/reservation-block}" class="chooeseButton">다른 일자 선택하기</a>
+      </div>
+      <div class="footer-box">
+        <div class="text-box">
+          <p class="content-text">* 월~목요일은 주중 할인 혜택(5%)이 적용 됩니다.</p>
+          <p class="content-text">* 얼리버드 할인은 2주 전에 예약하면 할인 혜택(5%)이 적용됩니다.</p>
+          <p class="content-text">* 할인율은 시기에 따라 변동 될 수 있습니다.</p>
+        </div>
+      </div>
+      <div class="time-container">
+        <hr>
+        <h3>시간대 선택</h3>
+        <div class="time-space-between">
+          <div class="col" th:each="time: ${times}">
+            <div th:class="${time.isBookable} ? 'text-center' : 'text-center-false'">
+              <th:block th:if="${time.isBookable}">
+                <a th:href="@{|/reservation/${time.blockId}|}" class="a-link">
+                  <span class="card-title" th:text="${time.startTime}">시작</span>
+                  <span>~</span>
+                  <span class="card-title" th:text="${time.endTime}">끝</span>
+                </a>
+              </th:block>
+              <th:block th:unless="${time.isBookable}">
+                <span class="card-title" th:text="${time.startTime}">시작</span>
+                <span>~</span>
+                <span class="card-title" th:text="${time.endTime}">끝</span>
+              </th:block>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function logInformation(startTime, endTime, date) {
+    // Log the information to the console
+    console.log('StartTime: ' + startTime + ', EndTime: ' + endTime + ', Date: ' + date);
+
+    // Update hidden input fields with the selected values
+    document.getElementById('selectedStartTime').value = startTime;
+    document.getElementById('selectedEndTime').value = endTime;
+    document.getElementById('selectedDate').value = date;
+  }
+</script>
+
+
+</body>
+</html>
